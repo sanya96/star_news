@@ -22,9 +22,9 @@ function Init(country) {
   document.querySelector("#currency").innerHTML = "";
   let url = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5";
   let category = ["sports", "entertainment", "health", "science", "technology"];
-  console.log("init");
   Request(url, GetCurrency);
-    for (let i = 0; i < category.length; i++){
+    for (let i = 0; i < category.length; i++)
+    {
         NewsRequest(category[i], country, GetNews);
     }
   } 
@@ -70,7 +70,6 @@ function Request(url, callback) {
 }
 
 function GetCurrency(data) {
-  ///console.log("GetCurrency: ", data);
 
   let currency = document.querySelector("#currency");
 
@@ -91,7 +90,7 @@ function GetCurrency(data) {
     sale.className = "sale";
     sale.innerHTML = data[i].sale;
     currency.appendChild(sale);
-    //console.log(data[i].ccy, " ", data[i].base_ccy, " buy: ", data[i].buy, " sale: ", data[i].sale);
+   
   }
 }
 
