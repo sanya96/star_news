@@ -20,9 +20,14 @@ function getCountry(){
 
 function Init(country) {
   document.querySelector("#currency").innerHTML = "";
+  let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?q=Rivne,ua&APPID=5901f74f6712ff7d05e6500f0c94f4aa";
   let url = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5";
   let category = ["sports", "entertainment", "health", "science", "technology"];
+  
+  WeatherRequest(weatherUrl, GetWeather);
+
   Request(url, GetCurrency);
+  
     for (let i = 0; i < category.length; i++)
     {
         NewsRequest(category[i], country, GetNews);
@@ -67,6 +72,52 @@ function Request(url, callback) {
       callback(data);
     }
   };
+}
+
+function WeatherRequest(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.send();
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) return;
+
+    if (xhr.status != 200) {
+      var errStatus = xhr.status;
+      var errText = xhr.statusText;
+      console.log(errStatus + ": " + errText);
+    } else {
+      var data = JSON.parse(xhr.responseText);
+     
+      callback(data);
+    }
+  };
+}
+
+function GetWeather(data){
+  let weather = document.querySelector("#weather");
+
+  let div = document.createElement("div");
+  div.className = "weatherDiv";
+  div.innerHTML = "<span>" + data.weather[0].description + "</span> ";
+  div.innerHTML += "<img src='http://openweathermap.org/img/w/" + data.weather[0].icon + ".png'>";
+  weather.appendChild(div);
+
+  let wind = document.createElement("div");
+  wind.className = "windDiv";
+  wind.innerHTML = "wind speed: " + data.wind.speed + "m/s";
+  weather.appendChild(wind);
+
+  let tempreture = document.createElement("div");
+  tempreture.className = "temperatureDiv";
+  tempreture.innerHTML = "temperature: " + Math.round(data.main.temp-273.15) + "°C";
+  weather.appendChild(tempreture);
+
+  let humidity = document.createElement("div");
+  humidity.className = "humidityDiv";
+  humidity.innerHTML += "humidity: " + data.main.humidity+"%";
+  weather.appendChild(humidity);
+
 }
 
 function GetCurrency(data) {
@@ -143,5 +194,13 @@ function GetNews(category, data) {
     author.className = "newsAuthor";
     author.innerHTML = data.articles[i].author;
     news.appendChild(author);
+
+    let more = document.createElement("a");
+    more.setAttribute("href", data.articles[i].url);
+    more.setAttribute("target", "blank")
+    more.className = "more";
+    more.innerHTML = " More..";
+    news.appendChild(more);
+    
   }
 }
